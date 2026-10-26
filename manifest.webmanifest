@@ -1,0 +1,17 @@
+{
+  "name": "سكينة",
+  "short_name": "سكينة",
+  "description": "آيات وأحاديث وقصص تطمئن القلب، تعليم الصلاة، الشكر والصدقة",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08241D",
+  "theme_color": "#08241D",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

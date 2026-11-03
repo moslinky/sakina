@@ -1,0 +1,39 @@
+name: Sakina push notifications
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: sakina-push
+  cancel-in-progress: false
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore state
+        uses: actions/cache@v4
+        with:
+          path: .state
+          key: push-state-${{ github.run_id }}
+          restore-keys: push-state-
+      - name: Install web-push
+        run: npm install --no-save --no-package-lock --no-audit --no-fund web-push@3.6.7
+      - name: Send notifications
+        run: node scripts/push.mjs
+        env:
+          VAPID_PRIVATE: ${{ secrets.VAPID_PRIVATE }}
+      - name: Save subscriptions
+        run: |
+          git config user.name "sakina-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -f push/subs.enc ]; then git add push/subs.enc; fi
+          if [ "$(date -u +%d%H%M)" \< "010015" ] && [ "$(date -u +%d%H)" = "0100" ]; then date -u > .keepalive; git add .keepalive; fi
+          if ! git diff --cached --quiet; then
+            git commit -m "Update subscriptions"
+            git pull --rebase --quiet || true
+            git push
+          fi

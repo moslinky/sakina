@@ -1,0 +1,22 @@
+name: Build adhkar data
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/fetch-adhkar.mjs'
+      - '.github/workflows/adhkar.yml'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch Hisn al-Muslim
+        run: node scripts/fetch-adhkar.mjs
+      - name: Commit adhkar.json
+        run: |
+          git config user.name "sakina-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add adhkar.json
+          git diff --cached --quiet || (git commit -m "Update adhkar data" && git push)
